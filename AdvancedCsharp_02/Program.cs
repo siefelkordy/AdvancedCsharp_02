@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -12,9 +13,23 @@ namespace AdvancedCsharp_02
         public double Price { get; set; }
         public int Stock { get; set; }
 
-        public static List<Product> SearchProducts(List<Product> catalog,Func<Product, bool> predicate)
+        // Task 01: Smart Product Search
+        public static List<Product> SearchProducts(
+            List<Product> catalog,
+            Func<Product, bool> predicate)
         {
             return catalog.Where(predicate).ToList();
+        }
+
+        // Task 03: Custom Report Generator
+        public static void PrintReport(
+            List<Product> products,
+            Action<Product> printAction)
+        {
+            foreach (Product p in products)
+            {
+                printAction(p);
+            }
         }
     }
 
@@ -36,25 +51,62 @@ namespace AdvancedCsharp_02
                 new Product { Id = 10, Name = "Jacket", Category = "Clothing", Price = 120, Stock = 15 }
             };
 
+            // ==============================
+            // Task 01: Smart Product Search
+            // ==============================
+
             // 1. All Electronics products
-            List<Product> electronics = Product.SearchProducts(catalog, p => p.Category == "Electronics");
+            List<Product> electronics =
+                Product.SearchProducts(catalog,
+                    p => p.Category == "Electronics");
 
             // 2. Products cheaper than $50
-            List<Product> cheaperThan50 = Product.SearchProducts(catalog, p => p.Price < 50);
+            List<Product> cheaperThan50 =
+                Product.SearchProducts(catalog,
+                    p => p.Price < 50);
 
             // 3. Products that are in stock
-            List<Product> inStock = Product.SearchProducts(catalog, p => p.Stock > 0);
+            List<Product> inStock =
+                Product.SearchProducts(catalog,
+                    p => p.Stock > 0);
 
             // 4. Clothing products under $100
-            List<Product> clothingUnder100 = Product.SearchProducts(catalog, p => p.Category == "Clothing" && p.Price < 100);
+            List<Product> clothingUnder100 =
+                Product.SearchProducts(catalog,
+                    p => p.Category == "Clothing" && p.Price < 100);
 
-            // Print results
+            Console.WriteLine("===== TASK 01: SMART PRODUCT SEARCH =====");
+
             PrintProducts("Electronics", electronics);
             PrintProducts("Products cheaper than $50", cheaperThan50);
             PrintProducts("Products in stock", inStock);
             PrintProducts("Clothing under $100", clothingUnder100);
+
+            // ==================================
+            // Task 03: Custom Report Generator
+            // ==================================
+
+            Console.WriteLine("\n===== TASK 03: CUSTOM REPORT GENERATOR =====");
+
+            // Scenario 1: Short Report
+            Action<Product> shortReportPrintAction =
+                p => Console.WriteLine($"{p.Name} - ${p.Price}");
+
+            Console.WriteLine("\n--- Short Report ---");
+
+            Product.PrintReport(catalog, shortReportPrintAction);
+
+            // Scenario 2: Detailed Report
+            Action<Product> detailedReportPrintAction =
+                p => Console.WriteLine(
+                    $"[{p.Category}] {p.Name} | Price: ${p.Price} | Stock: {p.Stock}");
+
+            Console.WriteLine("\n--- Detailed Report ---");
+
+            Product.PrintReport(catalog, detailedReportPrintAction);
         }
 
+        // Helper method for Task 01
         static void PrintProducts(string title, List<Product> products)
         {
             Console.WriteLine($"\n--- {title} ---");
