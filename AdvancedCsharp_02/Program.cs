@@ -46,6 +46,14 @@ namespace AdvancedCsharp_02
 
             return results;
         }
+
+        // Task 03.3: Filter Products
+        public static List<Product> FilterProducts(
+            List<Product> products,
+            Predicate<Product> condition)
+        {
+            return products.FindAll(condition);
+        }
     }
 
     internal class Program
@@ -70,6 +78,8 @@ namespace AdvancedCsharp_02
             // Task 01: Smart Product Search
             // ==================================
 
+            Console.WriteLine("===== TASK 01: SMART PRODUCT SEARCH =====");
+
             List<Product> electronics =
                 Product.SearchProducts(catalog,
                     p => p.Category == "Electronics");
@@ -86,8 +96,6 @@ namespace AdvancedCsharp_02
                 Product.SearchProducts(catalog,
                     p => p.Category == "Clothing" && p.Price < 100);
 
-            Console.WriteLine("===== TASK 01: SMART PRODUCT SEARCH =====");
-
             PrintProducts("Electronics", electronics);
             PrintProducts("Products cheaper than $50", cheaperThan50);
             PrintProducts("Products in stock", inStock);
@@ -99,21 +107,17 @@ namespace AdvancedCsharp_02
 
             Console.WriteLine("\n===== TASK 03.1: CUSTOM REPORT GENERATOR =====");
 
-            // Scenario 1: Short Report
             Action<Product> shortReportPrintAction =
                 p => Console.WriteLine($"{p.Name} - ${p.Price}");
 
             Console.WriteLine("\n--- Short Report ---");
-
             Product.PrintReport(catalog, shortReportPrintAction);
 
-            // Scenario 2: Detailed Report
             Action<Product> detailedReportPrintAction =
                 p => Console.WriteLine(
                     $"[{p.Category}] {p.Name} | Price: ${p.Price} | Stock: {p.Stock}");
 
             Console.WriteLine("\n--- Detailed Report ---");
-
             Product.PrintReport(catalog, detailedReportPrintAction);
 
             // ==================================
@@ -122,7 +126,6 @@ namespace AdvancedCsharp_02
 
             Console.WriteLine("\n===== TASK 03.2: TRANSFORM PRODUCTS =====");
 
-            // Scenario 3: Summary List
             List<string> summaryList =
                 Product.TransformProducts(
                     catalog,
@@ -135,7 +138,6 @@ namespace AdvancedCsharp_02
                 Console.WriteLine(summary);
             }
 
-            // Scenario 4: Price Label
             List<string> priceLabels =
                 Product.TransformProducts(
                     catalog,
@@ -147,6 +149,23 @@ namespace AdvancedCsharp_02
             {
                 Console.WriteLine(
                     $"{catalog[i].Name}: {priceLabels[i]}");
+            }
+
+            // ==================================
+            // Task 03.3: Filter Products
+            // ==================================
+
+            Console.WriteLine("\n===== TASK 03.3: LOW-STOCK ALERT =====");
+
+            List<Product> lowStockProducts =
+                Product.FilterProducts(
+                    catalog,
+                    p => p.Stock < 20);
+
+            foreach (Product p in lowStockProducts)
+            {
+                Console.WriteLine(
+                    $"[LOW STOCK] {p.Name}: only {p.Stock} left!");
             }
         }
 
