@@ -21,7 +21,7 @@ namespace AdvancedCsharp_02
             return catalog.Where(predicate).ToList();
         }
 
-        // Task 03: Custom Report Generator
+        // Task 03.1: Custom Report Generator
         public static void PrintReport(
             List<Product> products,
             Action<Product> printAction)
@@ -30,6 +30,21 @@ namespace AdvancedCsharp_02
             {
                 printAction(p);
             }
+        }
+
+        // Task 03.2: Transform Products
+        public static List<T> TransformProducts<T>(
+            List<Product> products,
+            Func<Product, T> transform)
+        {
+            List<T> results = new List<T>();
+
+            foreach (Product p in products)
+            {
+                results.Add(transform(p));
+            }
+
+            return results;
         }
     }
 
@@ -51,26 +66,22 @@ namespace AdvancedCsharp_02
                 new Product { Id = 10, Name = "Jacket", Category = "Clothing", Price = 120, Stock = 15 }
             };
 
-            // ==============================
+            // ==================================
             // Task 01: Smart Product Search
-            // ==============================
+            // ==================================
 
-            // 1. All Electronics products
             List<Product> electronics =
                 Product.SearchProducts(catalog,
                     p => p.Category == "Electronics");
 
-            // 2. Products cheaper than $50
             List<Product> cheaperThan50 =
                 Product.SearchProducts(catalog,
                     p => p.Price < 50);
 
-            // 3. Products that are in stock
             List<Product> inStock =
                 Product.SearchProducts(catalog,
                     p => p.Stock > 0);
 
-            // 4. Clothing products under $100
             List<Product> clothingUnder100 =
                 Product.SearchProducts(catalog,
                     p => p.Category == "Clothing" && p.Price < 100);
@@ -83,10 +94,10 @@ namespace AdvancedCsharp_02
             PrintProducts("Clothing under $100", clothingUnder100);
 
             // ==================================
-            // Task 03: Custom Report Generator
+            // Task 03.1: Custom Report Generator
             // ==================================
 
-            Console.WriteLine("\n===== TASK 03: CUSTOM REPORT GENERATOR =====");
+            Console.WriteLine("\n===== TASK 03.1: CUSTOM REPORT GENERATOR =====");
 
             // Scenario 1: Short Report
             Action<Product> shortReportPrintAction =
@@ -104,6 +115,39 @@ namespace AdvancedCsharp_02
             Console.WriteLine("\n--- Detailed Report ---");
 
             Product.PrintReport(catalog, detailedReportPrintAction);
+
+            // ==================================
+            // Task 03.2: Transform Products
+            // ==================================
+
+            Console.WriteLine("\n===== TASK 03.2: TRANSFORM PRODUCTS =====");
+
+            // Scenario 3: Summary List
+            List<string> summaryList =
+                Product.TransformProducts(
+                    catalog,
+                    p => $"{p.Name} (${p.Price})");
+
+            Console.WriteLine("\n--- Summary List ---");
+
+            foreach (string summary in summaryList)
+            {
+                Console.WriteLine(summary);
+            }
+
+            // Scenario 4: Price Label
+            List<string> priceLabels =
+                Product.TransformProducts(
+                    catalog,
+                    p => p.Price > 100 ? "Expensive!" : "Affordable");
+
+            Console.WriteLine("\n--- Price Labels ---");
+
+            for (int i = 0; i < catalog.Count; i++)
+            {
+                Console.WriteLine(
+                    $"{catalog[i].Name}: {priceLabels[i]}");
+            }
         }
 
         // Helper method for Task 01
